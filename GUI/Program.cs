@@ -14,13 +14,12 @@ namespace ShipSync.GUI
         [STAThread]
         private static void Main(string[] args)
         {
-            var appInstance = new Application();
-            var form = new MainForm();
-
-            var appConf = App.Container.Resolve<JsonConfig>();
-            Log.Debug(appConf.Dropbox["secret"]);
-
-            appInstance.Run(form);
+            using (var appInstance = new Application())
+            {
+                var appConf = App.Container.Resolve<JsonConfig>();
+                var form = new BrowserForm(appConf.Dropbox["key"]);
+                appInstance.Run(form);
+            }
         }
     }
 }

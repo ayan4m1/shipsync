@@ -3,6 +3,7 @@ using System.IO;
 using System.Reflection;
 using Autofac;
 using log4net;
+using log4net.Config;
 using ShipSync.Container.Configuration;
 
 namespace ShipSync.Container
@@ -20,6 +21,8 @@ namespace ShipSync.Container
         /// </summary>
         static App()
         {
+            XmlConfigurator.Configure();
+
             var builder = new ContainerBuilder();
 
             Log.Debug("Getting current assembly");
