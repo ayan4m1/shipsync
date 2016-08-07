@@ -1,0 +1,7 @@
+﻿{
+	"version": "1",
+	"dropbox": {
+		"key": "changeme",
+		"secret": "changeme"
+	}
+}
