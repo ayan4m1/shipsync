@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
+    <Compile Include="Configuration\Installation.cs" />
     <Compile Include="Configuration\JsonConfig.cs" />
     <Compile Include="Entity\Ship.cs" />
     <Compile Include="Configuration\JsonConfigModule.cs" />

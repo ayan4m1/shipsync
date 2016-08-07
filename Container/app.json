@@ -2,6 +2,8 @@
 	"version": "1",
 	"dropbox": {
 		"key": "changeme",
-		"secret": "changeme"
-	}
+		"secret": "changeme",
+		"directory":  "/Shared Craft/"
+	},
+	"installations": [ ]
 }
