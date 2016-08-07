@@ -4,7 +4,7 @@ using log4net;
 using Newtonsoft.Json;
 using ShipSync.Container.Entity;
 
-namespace ShipSync.Container.Modules
+namespace ShipSync.Container.Configuration
 {
     public class JsonConfigModule : Module
     {
@@ -31,7 +31,7 @@ namespace ShipSync.Container.Modules
             using (var reader = File.OpenText(_configPath))
             {
                 Log.Debug("Attempting to deserialize JSON config");
-                var configObject = JsonConvert.DeserializeObject<Config>(reader.ReadToEnd());
+                var configObject = JsonConvert.DeserializeObject<JsonConfig>(reader.ReadToEnd());
                 builder.Register(c => configObject);
             }
         }

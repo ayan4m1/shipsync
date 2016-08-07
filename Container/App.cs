@@ -3,7 +3,7 @@ using System.IO;
 using System.Reflection;
 using Autofac;
 using log4net;
-using ShipSync.Container.Modules;
+using ShipSync.Container.Configuration;
 
 namespace ShipSync.Container
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using log4net;
 using ShipSync.Container.Entity;
 
@@ -13,15 +14,14 @@ namespace ShipSync.Container.Repository
         private static readonly ILog Log = LogManager.GetLogger(typeof(ShipRepository));
         private static readonly IList<Ship> Ships = new List<Ship>();
 
-
         public bool Exists(string name)
         {
-            return FindByName(name) != null;
+            return Find(name) != null;
         }
 
         public Ship Find(string name)
         {
-            throw new NotImplementedException();
+            return Ships.First(ship => ship.Name.ToLower().Equals(name.ToLower()));
         }
 
         public Ship Find(Ship ship)
@@ -31,15 +31,16 @@ namespace ShipSync.Container.Repository
 
         public bool Remove(Ship ship)
         {
-            throw new NotImplementedException();
+            if (!Exists(ship.Name))
+            {
+                return false;
+            }
+
+            Ships.Remove(Find(ship));
+            return true;
         }
 
         public Ship Sync(Ship ship)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Ship FindByName(string name)
         {
             throw new NotImplementedException();
         }

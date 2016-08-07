@@ -3,7 +3,7 @@ using Autofac;
 using Eto.Forms;
 using log4net;
 using ShipSync.Container;
-using ShipSync.Container.Entity;
+using ShipSync.Container.Configuration;
 
 namespace ShipSync.GUI
 {
@@ -17,7 +17,7 @@ namespace ShipSync.GUI
             var appInstance = new Application();
             var form = new MainForm();
 
-            var appConf = App.Container.Resolve<Config>();
+            var appConf = App.Container.Resolve<JsonConfig>();
             Log.Debug(appConf.Dropbox["secret"]);
 
             appInstance.Run(form);

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace ShipSync.Container.Entity
+namespace ShipSync.Container.Configuration
 {
-    public class Config
+    public class JsonConfig
     {
         public Dictionary<string, string> Dropbox;
         public int Version;

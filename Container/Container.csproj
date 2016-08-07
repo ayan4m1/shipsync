@@ -55,9 +55,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App.cs" />
-    <Compile Include="Entity\Config.cs" />
+    <Compile Include="Configuration\JsonConfig.cs" />
     <Compile Include="Entity\Ship.cs" />
-    <Compile Include="Modules\JsonConfigModule.cs" />
+    <Compile Include="Configuration\JsonConfigModule.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\IShipRepository.cs" />
     <Compile Include="Repository\ShipRepository.cs" />
