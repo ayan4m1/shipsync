@@ -1,12 +1,16 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace ShipSync.Container.Configuration
 {
     public class JsonConfig
     {
         public int Version;
-        public Dictionary<string, string> Dropbox;
+
+        [JsonProperty("dropbox.token")]
+        public string DropboxToken;
+
         public List<Installation> Installations;
     }
 }

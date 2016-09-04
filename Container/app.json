@@ -1,9 +1,7 @@
 ﻿{
 	"version": "1",
 	"dropbox": {
-		"key": "changeme",
-		"secret": "changeme",
-		"directory":  "/Shared Craft/"
+		"token": "changeme"
 	},
 	"installations": [ ]
 }
