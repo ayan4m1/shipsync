@@ -4,8 +4,13 @@ namespace ShipSync.Container.Entity
 {
     public class Ship
     {
-        public string CraftPath;
-        public DateTime? LastSync;
+        // "friendly" name extracted from .craft
         public string Name;
+
+        // actual filename
+        public string FileName;
+
+        // related save file
+        public GameSave Save;
     }
 }

@@ -62,13 +62,15 @@
     <Compile Include="App.cs" />
     <Compile Include="Configuration\Installation.cs" />
     <Compile Include="Configuration\JsonConfig.cs" />
+    <Compile Include="Entity\GameSave.cs" />
     <Compile Include="Entity\Ship.cs" />
     <Compile Include="Configuration\JsonConfigModule.cs" />
+    <Compile Include="Entity\SaveSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository\IShipRepository.cs" />
-    <Compile Include="Repository\ShipRepository.cs" />
+    <Compile Include="Service\IPathService.cs" />
     <Compile Include="Service\IShipService.cs" />
     <Compile Include="Service\ISyncService.cs" />
+    <Compile Include="Service\PathService.cs" />
     <Compile Include="Service\ShipService.cs" />
     <Compile Include="Service\SyncService.cs" />
   </ItemGroup>

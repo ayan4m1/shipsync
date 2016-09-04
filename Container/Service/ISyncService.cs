@@ -1,11 +1,13 @@
 ﻿using System;
 using System.IO;
+using System.Threading.Tasks;
+using ShipSync.Container.Entity;
 
 namespace ShipSync.Container.Service
 {
     internal interface ISyncService
     {
-        DateTime? GetLastSync(string name);
-        bool Sync(string name, Stream data);
+        Task<DateTime?> GetLastSync(GameSave save);
+        Task<bool> TrySync(GameSave save);
     }
 }
