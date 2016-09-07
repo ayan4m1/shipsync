@@ -3,5 +3,5 @@
 	"dropbox": {
 		"token": "changeme"
 	},
-	"installations": [ ]
+	"sources": []
 }

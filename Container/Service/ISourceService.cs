@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShipSync.Container.Configuration
+namespace ShipSync.Container.Service
 {
-    public class Installation
+    public interface ISourceService
     {
-        public string Path;
-        public bool Enabled;
+
     }
 }

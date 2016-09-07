@@ -7,7 +7,7 @@ using ShipSync.Container.Entity;
 
 namespace ShipSync.Container.Service
 {
-    public class PathService : IPathService
+    public sealed class PathService : IPathService
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PathService));
 
@@ -19,7 +19,7 @@ namespace ShipSync.Container.Service
         /// <summary>
         /// Will take the place of any odd characters
         /// </summary>
-        private static readonly string CleanReplacement = "-";
+        private const string CleanReplacement = "-";
 
         /// <summary>
         /// Internal identifier used to locate our files in the Dropbox filesystem
@@ -44,12 +44,12 @@ namespace ShipSync.Container.Service
 
         public string CreateRemoteShipPath(Ship ship)
         {
-            return _appName + "Ships/" + ship.FileName;
+            return _appName + "/Ships/" + ship.FileName + ".craft";
         }
 
         public string CreateRemoteSavePath(GameSave save)
         {
-            return _appName + "Saves/" + save?.SaveSource + ".json";
+            return _appName + "/Saves/" + save?.SaveSource + ".json";
         }
 
         public string CleanName(string input)

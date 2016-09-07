@@ -1,11 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using ShipSync.Container.Entity;
 
 namespace ShipSync.Container.Service
 {
-    internal interface IShipService
+    public interface IShipService
     {
-        IEnumerable<string> FindAllShips();
-        IEnumerable<string> FindShipsInSave(string saveName);
+        IEnumerable<string> FindShips();
+        IEnumerable<string> FindShipsInSave(GameSave save);
     }
 }

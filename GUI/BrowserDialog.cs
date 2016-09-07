@@ -1,33 +1,31 @@
 ﻿using System;
-using System.Threading;
-using System.Windows.Forms;
+using System.Threading.Tasks;
+using Autofac;
 using CefSharp;
-using CefSharp.Internals;
 using CefSharp.WinForms;
 using Dropbox.Api;
 using Eto.Drawing;
 using Eto.Forms;
-using Eto.WinForms;
 using log4net;
-using Form = Eto.Forms.Form;
+using ShipSync.Container.Configuration;
 
 namespace ShipSync.GUI
 {
-    internal class BrowserForm : Form
+    internal class BrowserDialog : Dialog
     {
-        private static readonly ILog Log = LogManager.GetLogger(typeof(BrowserForm));
+        private static readonly ILog Log = LogManager.GetLogger(typeof(BrowserDialog));
+        private static readonly Uri RedirectUri = new Uri("https://localhost/authorize");
 
+        private readonly TaskCompletionSource<bool> _browserInitialized = new TaskCompletionSource<bool>();
+        private readonly IContainer _container;
         private ChromiumWebBrowser _browser;
-        private readonly string _clientId;
+        private readonly string _authNonce;
 
-        static BrowserForm()
+        public BrowserDialog(IContainer container)
         {
             Cef.Initialize(new CefSettings());
-        }
-
-        public BrowserForm(string clientId)
-        {
-            _clientId = clientId;
+            _container = container;
+            _authNonce = Guid.NewGuid().ToString("N");
         }
 
         protected override void Dispose(bool disposing)
@@ -44,9 +42,9 @@ namespace ShipSync.GUI
         {
             base.OnLoadComplete(e);
 
-            _browser = new ChromiumWebBrowser(null)
+            _browser = new ChromiumWebBrowser(string.Empty)
             {
-                Dock = DockStyle.Fill
+                Dock = System.Windows.Forms.DockStyle.Fill
             };
 
             _browser.LoadingStateChanged += _browser_LoadingStateChanged;
@@ -75,18 +73,22 @@ namespace ShipSync.GUI
         private void _browser_LoadError(object sender, LoadErrorEventArgs e)
         {
             Log.Info("Load error");
+            var loadEx = new InvalidOperationException($"{e.FailedUrl} ({e.ErrorText})");
+            _browserInitialized.TrySetException(loadEx);
         }
 
         private void _browser_IsBrowserInitializedChanged(object sender, IsBrowserInitializedChangedEventArgs e)
         {
             Log.Info("Initialized: " + e.IsBrowserInitialized);
-
-            if (e.IsBrowserInitialized)
+            _browserInitialized.TrySetResult(e.IsBrowserInitialized);
+            Application.Instance.AsyncInvoke(() =>
             {
-                var uri = DropboxOAuth2Helper.GetAuthorizeUri(_clientId).ToString();
+                var config = _container.Resolve<JsonConfig>();
+                var uri = DropboxOAuth2Helper.GetAuthorizeUri(OAuthResponseType.Token, config.Dropbox.Client,
+                    RedirectUri, _authNonce);
                 Log.Info("Navigating to auth page @ " + uri);
-                _browser.Load(uri);
-            }
+                _browser.Load(uri.ToString());
+            });
         }
 
         private void _browser_StatusMessage(object sender, StatusMessageEventArgs e)

@@ -31,8 +31,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\GUI\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
+    <Reference Include="Autofac, Version=4.1.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.4.1.0\lib\net45\Autofac.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Dropbox.Api, Version=0.1.6058.19706, Culture=neutral, PublicKeyToken=310f0e82fbb45d01, processorArchitecture=MSIL">
@@ -59,8 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App.cs" />
-    <Compile Include="Configuration\Installation.cs" />
+    <Compile Include="Configuration\DropboxConfig.cs" />
     <Compile Include="Configuration\JsonConfig.cs" />
     <Compile Include="Entity\GameSave.cs" />
     <Compile Include="Entity\Ship.cs" />
@@ -69,6 +68,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Service\IPathService.cs" />
     <Compile Include="Service\IShipService.cs" />
+    <Compile Include="Service\ISourceService.cs" />
     <Compile Include="Service\ISyncService.cs" />
     <Compile Include="Service\PathService.cs" />
     <Compile Include="Service\ShipService.cs" />
