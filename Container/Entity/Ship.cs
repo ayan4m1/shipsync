@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ShipSync.Container.Entity
+﻿namespace ShipSync.Container.Entity
 {
     public class Ship
     {

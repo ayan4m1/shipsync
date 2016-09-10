@@ -5,7 +5,6 @@ using Autofac;
 using Eto.Forms;
 using log4net;
 using log4net.Config;
-using ShipSync.Container;
 using ShipSync.Container.Configuration;
 using ShipSync.Container.Service;
 

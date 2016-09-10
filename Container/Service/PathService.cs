@@ -2,7 +2,6 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
 using log4net;
-using log4net.Core;
 using ShipSync.Container.Entity;
 
 namespace ShipSync.Container.Service

@@ -2,7 +2,6 @@
 using Autofac;
 using log4net;
 using Newtonsoft.Json;
-using ShipSync.Container.Entity;
 
 namespace ShipSync.Container.Configuration
 {
