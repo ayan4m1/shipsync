@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Web;
+using System.Windows.Forms;
 using Autofac;
 using CefSharp;
 using CefSharp.WinForms;
@@ -8,6 +10,7 @@ using Eto.Drawing;
 using Eto.Forms;
 using log4net;
 using ShipSync.Container.Configuration;
+using Application = Eto.Forms.Application;
 
 namespace ShipSync.GUI
 {
@@ -44,7 +47,7 @@ namespace ShipSync.GUI
 
             _browser = new ChromiumWebBrowser(string.Empty)
             {
-                Dock = System.Windows.Forms.DockStyle.Fill
+                Dock = DockStyle.Fill
             };
 
             _browser.LoadingStateChanged += _browser_LoadingStateChanged;
@@ -98,7 +101,26 @@ namespace ShipSync.GUI
 
         private void _browser_AddressChanged(object sender, AddressChangedEventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(e.Address))
+            {
+                return;
+            }
             Log.Info("Address: " + e.Address);
+
+            var addressUri = new Uri(e.Address);
+            if (addressUri.Host != "localhost")
+            {
+                return;
+            }
+
+            // the first character of the fragment is '#', discard it
+            var queryParams = HttpUtility.ParseQueryString(addressUri.Fragment.Substring(1));
+            var stateCheck = queryParams["state"];
+            if (_authNonce.Equals(stateCheck))
+            {
+                var config = _container.Resolve<JsonConfig>();
+                config.Dropbox.Token = queryParams["access_token"];
+            }
         }
 
         private void _browser_TitleChanged(object sender, TitleChangedEventArgs e)
