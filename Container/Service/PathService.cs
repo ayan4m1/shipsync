@@ -2,6 +2,7 @@
 using System.Reflection;
 using System.Text.RegularExpressions;
 using log4net;
+using Microsoft.Win32;
 using ShipSync.Container.Entity;
 
 namespace ShipSync.Container.Service
@@ -54,6 +55,25 @@ namespace ShipSync.Container.Service
         public string CleanName(string input)
         {
             return CleanPattern.Replace(input, CleanReplacement).ToLower();
+        }
+
+        public string FindSteamInstall()
+        {
+            try
+            {
+                var hive = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+                var steam = hive.OpenSubKey(@"SOFTWARE\Valve\Steam");
+                if (steam != null)
+                {
+                    return steam.GetValue("InstallPath").ToString();
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Error("Exception trying to find steam install.", e);
+            }
+
+            return string.Empty;
         }
     }
 }

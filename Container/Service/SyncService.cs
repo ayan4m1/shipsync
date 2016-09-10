@@ -55,10 +55,6 @@ namespace ShipSync.Container.Service
                     await _client.Files.UploadAsync(remotePath, clientModified: DateTime.UtcNow, body: reader);
                 }
             }
-            else
-            {
-                // check to see if ours is more recent
-            }
 
             // create remote paths for each ship in the save directory
             var paths = save.Ships.Select(ship => _pathService.CreateRemoteShipPath(ship));

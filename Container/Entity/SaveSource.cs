@@ -5,18 +5,12 @@ namespace ShipSync.Container.Entity
     public class SaveSource
     {
         public readonly Guid Id;
-        public readonly string Name;
+        public string Name;
+        public string InstallPath;
 
         public SaveSource()
         {
             Id = Guid.NewGuid();
-            Name = new Haikunator().Haikunate(tokenLength: 0);
-        }
-
-        public SaveSource(Guid id, string name)
-        {
-            Id = id;
-            Name = name;
         }
 
         public override string ToString()

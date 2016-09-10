@@ -8,5 +8,6 @@ namespace ShipSync.Container.Service
         string CreateRemoteSavePath(GameSave save);
         string CreateRemoteShipPath(Ship ship);
         string CleanName(string name);
+        string FindSteamInstall();
     }
 }
