@@ -5,9 +5,12 @@ namespace ShipSync.Container.Service
     public interface IPathService
     {
         string RemotePath { get; }
-        string CreateRemoteSavePath(GameSave save);
-        string CreateRemoteShipPath(Ship ship);
+        
+        string CreateRemotePath(GameSave save);
+        string CreateRemotePath(Ship ship);
+
         string CleanName(string name);
+
         string FindSteamInstall();
     }
 }

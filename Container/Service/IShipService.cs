@@ -5,7 +5,7 @@ namespace ShipSync.Container.Service
 {
     public interface IShipService
     {
-        IEnumerable<string> FindShips();
-        IEnumerable<string> FindShipsInSave(GameSave save);
+        IEnumerable<GameSave> FindSavesInSource(SaveSource source);
+        IEnumerable<Ship> FindShipsInSave(GameSave save);
     }
 }

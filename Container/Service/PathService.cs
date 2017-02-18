@@ -42,12 +42,12 @@ namespace ShipSync.Container.Service
 
         public string RemotePath => _appName;
 
-        public string CreateRemoteShipPath(Ship ship)
+        public string CreateRemotePath(Ship ship)
         {
             return _appName + "/Ships/" + ship.FileName + ".craft";
         }
 
-        public string CreateRemoteSavePath(GameSave save)
+        public string CreateRemotePath(GameSave save)
         {
             return _appName + "/Saves/" + save?.SaveSource + ".json";
         }

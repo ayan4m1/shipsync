@@ -9,6 +9,6 @@ namespace ShipSync.GUI
         {
             Title = "ShipSync";
             ClientSize = new Size(800, 600);
-        }
+        }   
     }
 }

@@ -1,33 +1,34 @@
 ﻿using System;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
-using Autofac;
+using System.Windows.Forms.VisualStyles;
 using CefSharp;
 using CefSharp.WinForms;
 using Dropbox.Api;
 using Eto.Drawing;
 using Eto.Forms;
 using log4net;
-using ShipSync.Container.Configuration;
-using Application = Eto.Forms.Application;
+using ShipSync.Container.Service;
+using Form = Eto.Forms.Form;
 
 namespace ShipSync.GUI
 {
-    internal class BrowserDialog : Dialog
+    internal class BrowserDialog : Form, IDisposable
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(BrowserDialog));
         private static readonly Uri RedirectUri = new Uri("https://localhost/authorize");
 
         private readonly TaskCompletionSource<bool> _browserInitialized = new TaskCompletionSource<bool>();
-        private readonly IContainer _container;
+        private readonly IAuthService _authService;
         private ChromiumWebBrowser _browser;
         private readonly string _authNonce;
 
-        public BrowserDialog(IContainer container)
+        public BrowserDialog(IAuthService authService)
         {
             Cef.Initialize(new CefSettings());
-            _container = container;
+            _authService = authService;
             _authNonce = Guid.NewGuid().ToString("N");
         }
 
@@ -41,9 +42,19 @@ namespace ShipSync.GUI
             base.Dispose(disposing);
         }
 
-        protected override void OnLoadComplete(EventArgs e)
+        protected override async void OnLoadComplete(EventArgs e)
         {
             base.OnLoadComplete(e);
+            var authed = await _authService.TestAccessToken();
+            if (authed)
+            {
+                this.Close();
+                Dispose(true);
+                return;
+            }
+
+            Size = Eto.Forms.Screen.PrimaryScreen.WorkingArea.Size.ToSize();
+            Location = Point.Empty;
 
             _browser = new ChromiumWebBrowser(string.Empty)
             {
@@ -84,10 +95,9 @@ namespace ShipSync.GUI
         {
             Log.Info("Initialized: " + e.IsBrowserInitialized);
             _browserInitialized.TrySetResult(e.IsBrowserInitialized);
-            Application.Instance.AsyncInvoke(() =>
+            Eto.Forms.Application.Instance.AsyncInvoke(() =>
             {
-                var config = _container.Resolve<JsonConfig>();
-                var uri = DropboxOAuth2Helper.GetAuthorizeUri(OAuthResponseType.Token, config.Dropbox.Client,
+                var uri = DropboxOAuth2Helper.GetAuthorizeUri(OAuthResponseType.Token, _authService.ClientIdentifier,
                     RedirectUri, _authNonce);
                 Log.Info("Navigating to auth page @ " + uri);
                 _browser.Load(uri.ToString());
@@ -106,6 +116,7 @@ namespace ShipSync.GUI
                 return;
             }
             Log.Info("Address: " + e.Address);
+            Log.Info("Validating response");
 
             var addressUri = new Uri(e.Address);
             if (addressUri.Host != "localhost")
@@ -118,24 +129,25 @@ namespace ShipSync.GUI
             var stateCheck = queryParams["state"];
             if (_authNonce.Equals(stateCheck))
             {
-                var config = _container.Resolve<JsonConfig>();
-                config.Dropbox.Token = queryParams["access_token"];
+                Log.Info("State validation completed successfully, setting token");
+                _authService.UpdateToken(queryParams["access_token"]);
+                Eto.Forms.Application.Instance.AsyncInvoke(Close);
             }
         }
 
         private void _browser_TitleChanged(object sender, TitleChangedEventArgs e)
         {
-            Log.Info("Title: " + e.Title);
+            Log.Debug("Title: " + e.Title);
         }
 
         private void _browser_ConsoleMessage(object sender, ConsoleMessageEventArgs e)
         {
-            Log.Info(e.Source + ": " + e.Message);
+            Log.Info(e.Source + "> " + e.Message);
         }
 
         private void _browser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
-            Log.Info("Loading is " + e.IsLoading);
+            Log.Debug("Loading is " + e.IsLoading);
         }
     }
 }

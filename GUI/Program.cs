@@ -45,7 +45,8 @@ namespace ShipSync.GUI
             using (var appInstance = new Application())
             {
                 // see if we need a new token
-                //appInstance.Run(new BrowserDialog(Container));
+                appInstance.Run(new BrowserDialog(Container.Resolve<IAuthService>()));
+                Log.Info("Auth resolved");
 
                 var pathService = Container.Resolve<IPathService>();
                 var steamPath = pathService.FindSteamInstall();
@@ -133,10 +134,10 @@ namespace ShipSync.GUI
                     }
                 }
 
-                /*Log.Info("Creating main application form");
+                Log.Info("Creating main application form");
                 var mainForm = new MainForm();
                 appInstance.Run(mainForm);
-                Log.Info("UI thread exited");*/
+                Log.Info("UI thread exited");
             }
         }
     }

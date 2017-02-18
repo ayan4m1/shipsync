@@ -1,6 +1,19 @@
-﻿namespace ShipSync.Container.Service
+﻿using System;
+using System.Collections.Generic;
+using ShipSync.Container.Entity;
+
+namespace ShipSync.Container.Service
 {
-    internal sealed class ShipService
+    public sealed class ShipService : IShipService
     {
+        public IEnumerable<GameSave> FindSavesInSource(SaveSource source)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<Ship> FindShipsInSave(GameSave save)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
