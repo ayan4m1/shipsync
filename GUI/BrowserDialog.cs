@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Net.Mime;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using CefSharp;
 using CefSharp.WinForms;
 using Dropbox.Api;
@@ -21,14 +19,14 @@ namespace ShipSync.GUI
         private static readonly Uri RedirectUri = new Uri("https://localhost/authorize");
 
         private readonly TaskCompletionSource<bool> _browserInitialized = new TaskCompletionSource<bool>();
-        private readonly IAuthService _authService;
         private ChromiumWebBrowser _browser;
         private readonly string _authNonce;
 
-        public BrowserDialog(IAuthService authService)
+        public IAuthService AuthService;
+
+        public BrowserDialog()
         {
             Cef.Initialize(new CefSettings());
-            _authService = authService;
             _authNonce = Guid.NewGuid().ToString("N");
         }
 
@@ -45,12 +43,10 @@ namespace ShipSync.GUI
         protected override async void OnLoadComplete(EventArgs e)
         {
             base.OnLoadComplete(e);
-            var authed = await _authService.TestAccessToken();
+            var authed = await AuthService.TestAccessToken();
             if (authed)
             {
-                this.Close();
-                Dispose(true);
-                return;
+                Eto.Forms.Application.Instance.AsyncInvoke(BeginClosing);
             }
 
             Size = Eto.Forms.Screen.PrimaryScreen.WorkingArea.Size.ToSize();
@@ -70,7 +66,14 @@ namespace ShipSync.GUI
             _browser.LoadError += _browser_LoadError;
             _browser.HandleCreated += _browser_HandleCreated;
             _browser.Resize += _browser_Resize;
+
             Content = _browser.ToEto();
+        }
+
+        private void BeginClosing()
+        {
+            Close();
+            Dispose(true);
         }
 
         private void _browser_Resize(object sender, EventArgs e)
@@ -97,7 +100,7 @@ namespace ShipSync.GUI
             _browserInitialized.TrySetResult(e.IsBrowserInitialized);
             Eto.Forms.Application.Instance.AsyncInvoke(() =>
             {
-                var uri = DropboxOAuth2Helper.GetAuthorizeUri(OAuthResponseType.Token, _authService.ClientIdentifier,
+                var uri = DropboxOAuth2Helper.GetAuthorizeUri(OAuthResponseType.Token, AuthService.ClientIdentifier,
                     RedirectUri, _authNonce);
                 Log.Info("Navigating to auth page @ " + uri);
                 _browser.Load(uri.ToString());
@@ -130,8 +133,8 @@ namespace ShipSync.GUI
             if (_authNonce.Equals(stateCheck))
             {
                 Log.Info("State validation completed successfully, setting token");
-                _authService.UpdateToken(queryParams["access_token"]);
-                Eto.Forms.Application.Instance.AsyncInvoke(Close);
+                AuthService.UpdateToken(queryParams["access_token"]);
+                Eto.Forms.Application.Instance.AsyncInvoke(BeginClosing);
             }
         }
 

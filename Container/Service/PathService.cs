@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using log4net;
@@ -57,23 +58,70 @@ namespace ShipSync.Container.Service
             return CleanPattern.Replace(input, CleanReplacement).ToLower();
         }
 
-        public string FindSteamInstall()
+        public bool TestGameDirectory(string baseDir)
         {
-            try
+            if (!Directory.Exists(baseDir))
             {
-                var hive = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
-                var steam = hive.OpenSubKey(@"SOFTWARE\Valve\Steam");
-                if (steam != null)
-                {
-                    return steam.GetValue("InstallPath").ToString();
-                }
-            }
-            catch (Exception e)
-            {
-                Log.Error("Exception trying to find steam install.", e);
+                return false;
             }
 
-            return string.Empty;
+            return File.Exists(Path.Combine(baseDir, "buildID64.txt"));
+        }
+
+        public SaveSource FindSaveSource()
+        {
+            var save = new SaveSource();
+
+            switch (Environment.OSVersion.Platform)
+            {
+                case PlatformID.Win32Windows:
+                case PlatformID.Win32NT:
+                case PlatformID.Win32S:
+                case PlatformID.WinCE:
+                    try
+                    {
+                        var hive = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry32);
+                        var steam = hive.OpenSubKey(@"SOFTWARE\Valve\Steam");
+                        if (steam != null && steam.SubKeyCount > 0)
+                        {
+                            save.InstallPath = Path.Combine(steam.GetValue("InstallPath").ToString(), "steamapps/common/Kerbal Space Program");
+                        }
+                        else
+                        {
+                            Log.Warn("Did not find a Steam install in the Windows registry");
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("Exception trying to find steam install.", e);
+                    }
+                    break;
+                case PlatformID.MacOSX:
+                    if (TestGameDirectory("~/Library/Application Support/Steam/steamapps/common/Kerbal Space Program"))
+                    {
+                        save.InstallPath = "~/Library/Application Support/Steam/steamapps/common/Kerbal Space Program";
+                    }
+                    break;
+                case PlatformID.Unix:
+                    if (TestGameDirectory("~/Steam/Kerbal Space Program"))
+                    {
+                        save.InstallPath = "~/Steam/Kerbal Space Program";
+                    }
+                    else if (TestGameDirectory("~/.local/share/Steam/SteamApps/common/Kerbal Space Program"))
+                    {
+                        save.InstallPath = "~/.local/share/Steam/SteamApps/common/Kerbal Space Program";
+                    }
+                    else if (TestGameDirectory("~/.steam/steam/steamapps/common/Kerbal Space Program"))
+                    {
+                        save.InstallPath = "~/.steam/steam/steamapps/common/Kerbal Space Program";
+                    }
+                    break;
+                default:
+                    Log.Warn("You are running some exotic platform that we don't care about...");
+                    break;
+            }
+
+            return save;
         }
     }
 }

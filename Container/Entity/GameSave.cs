@@ -15,19 +15,9 @@ namespace ShipSync.Container.Entity
         public IEnumerable<Ship> Ships => _ships.AsReadOnly();
         private readonly List<Ship> _ships = new List<Ship>();
 
-        /// <summary>
-        /// Creates a GameSave object containing the provided
-        /// enumeration of ships. They will be set as owned by
-        /// this save.
-        /// </summary>
-        /// <param name="ships">List of ships to associate with this save</param>
-        public GameSave(IEnumerable<Ship> ships)
+        public void AddShips(IEnumerable<Ship> ships)
         {
-            _ships.AddRange(ships.Select(ship =>
-            {
-                ship.Save = this;
-                return ship;
-            }));
+            _ships.AddRange(ships);
         }
     }
 }

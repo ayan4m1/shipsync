@@ -11,6 +11,6 @@ namespace ShipSync.Container.Service
 
         string CleanName(string name);
 
-        string FindSteamInstall();
+        SaveSource FindSaveSource();
     }
 }
