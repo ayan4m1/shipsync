@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using Eto.Drawing;
 using Eto.Forms;
 using log4net;
-using ShipSync.Container.Entity;
 using ShipSync.Container.Service;
 
 namespace ShipSync.GUI
