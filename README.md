@@ -8,7 +8,7 @@ Usage
 
 Launch it, log in to Dropbox (only if you need a new access token), select the saves you want to sync and hit Sync.
 
-![UI Example](http://imgur.com/FwkMwNk)
+![UI Example](http://i.imgur.com/FwkMwNk.png)
 
 Credits
 -------
