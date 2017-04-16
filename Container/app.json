@@ -1,7 +1,4 @@
 ﻿{
-	"version": "1",
 	"dropbox": {
-		"token": "changeme"
-	},
-	"sources": []
+		"client": "changeme",
 }

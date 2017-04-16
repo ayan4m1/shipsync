@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
@@ -27,10 +28,12 @@ namespace ShipSync.GUI
 
         public BrowserDialog()
         {
+            Icon = Icon.FromResource("ShipSync.GUI.app.ico", Assembly.GetExecutingAssembly());
+            _authNonce = Guid.NewGuid().ToString("N");
+
             if (!Cef.IsInitialized)
             {
                 Cef.Initialize(new CefSettings());
-                _authNonce = Guid.NewGuid().ToString("N");
             }
         }
 
@@ -44,17 +47,13 @@ namespace ShipSync.GUI
             }
         }
 
-        protected override async void OnLoadComplete(EventArgs e)
+        protected override void OnLoadComplete(EventArgs e)
         {
             base.OnLoadComplete(e);
 
-            var authed = await AuthService.TestAccessToken();
-            if (authed)
-            {
-                Eto.Forms.Application.Instance.AsyncInvoke(Close);
-            }
-
-            Size = Eto.Forms.Screen.PrimaryScreen.WorkingArea.Size.ToSize();
+            var size = Screen.WorkingArea;
+            size.Inflate(Screen.WorkingArea.Size);
+            Size = size.Size.ToSize();
             Location = Point.Empty;
 
             _browser = new ChromiumWebBrowser(string.Empty)

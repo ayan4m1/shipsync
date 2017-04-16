@@ -45,21 +45,26 @@ namespace ShipSync.GUI
             {
                 var authService = Container.Resolve<IAuthService>();
 
-                // see if we need a new token
-                appInstance.Run(new BrowserDialog()
-                {
-                    AuthService = authService
-                });
-
                 var testTask = authService.TestAccessToken();
                 testTask.Wait();
                 if (testTask.Result)
                 {
-                    Log.Info("Auth resolved");
+                    Log.Info("Valid token confirmed");
                 }
                 else
                 {
-                    Log.Error("Failed to get a valid access token!");
+                    try
+                    {
+                        // see if we need a new token
+                        appInstance.Run(new BrowserDialog()
+                        {
+                            AuthService = authService
+                        });
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Error("Failed to get a valid access token!", e);
+                    }
                 }
             }
 
