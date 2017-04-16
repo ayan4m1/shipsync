@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using CefSharp;
 using CefSharp.WinForms;
 using Dropbox.Api;
+using Eto;
 using Eto.Drawing;
 using Eto.Forms;
 using log4net;
@@ -28,13 +29,13 @@ namespace ShipSync.GUI
 
         public BrowserDialog()
         {
-            Icon = Icon.FromResource("ShipSync.GUI.app.ico", Assembly.GetExecutingAssembly());
-            _authNonce = Guid.NewGuid().ToString("N");
-
-            if (!Cef.IsInitialized)
+            if (Cef.IsInitialized)
             {
-                Cef.Initialize(new CefSettings());
+                return;
             }
+
+            Cef.Initialize(new CefSettings());
+            _authNonce = Guid.NewGuid().ToString("N");
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -51,9 +52,7 @@ namespace ShipSync.GUI
         {
             base.OnLoadComplete(e);
 
-            var size = Screen.WorkingArea;
-            size.Inflate(Screen.WorkingArea.Size);
-            Size = size.Size.ToSize();
+            Icon = Icon.FromResource("ShipSync.GUI.app.ico", Assembly.GetExecutingAssembly());
             Location = Point.Empty;
 
             _browser = new ChromiumWebBrowser(string.Empty)
@@ -72,6 +71,7 @@ namespace ShipSync.GUI
             _browser.Resize += _browser_Resize;
 
             Content = _browser.ToEto();
+            Size = Eto.Forms.Screen.PrimaryScreen.WorkingArea.Size.ToSize();
         }
 
         private void _browser_Resize(object sender, EventArgs e)
@@ -128,12 +128,14 @@ namespace ShipSync.GUI
             // the first character of the fragment is '#', discard it
             var queryParams = HttpUtility.ParseQueryString(addressUri.Fragment.Substring(1));
             var stateCheck = queryParams["state"];
-            if (_authNonce.Equals(stateCheck))
+            if (!_authNonce.Equals(stateCheck))
             {
-                Log.Info("State validation completed successfully, setting token");
-                AuthService.UpdateToken(queryParams["access_token"]);
-                Eto.Forms.Application.Instance.AsyncInvoke(Close);
+                return;
             }
+
+            Log.Info("State validation completed successfully, setting token");
+            AuthService.UpdateToken(queryParams["access_token"]);
+            Eto.Forms.Application.Instance.AsyncInvoke(Close);
         }
 
         private void _browser_TitleChanged(object sender, TitleChangedEventArgs e)

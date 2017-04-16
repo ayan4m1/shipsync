@@ -42,6 +42,11 @@ namespace ShipSync.Container.Service
 
         private void UpdateClient()
         {
+            if (_config?.Token == null)
+            {
+                return;
+            }
+
             Client = new DropboxClient(_config.Token);
             Log.Debug("Created Dropbox Client with token " + _config.Token);
         }

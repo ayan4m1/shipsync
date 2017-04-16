@@ -64,6 +64,7 @@ namespace ShipSync.GUI
                     catch (Exception e)
                     {
                         Log.Error("Failed to get a valid access token!", e);
+                        return;
                     }
                 }
             }
