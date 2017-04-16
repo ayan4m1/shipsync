@@ -51,9 +51,12 @@ namespace ShipSync.GUI
                     AuthService = Container.Resolve<IAuthService>()
                 });
                 Log.Info("Auth resolved");
+            }
 
+            using (var appInstance = new Application())
+            {
                 Log.Info("Creating main application form");
-                var mainForm = new MainForm()
+                var mainForm = new SyncSelectDialog()
                 {
                     PathService = Container.Resolve<IPathService>(),
                     ShipService = Container.Resolve<IShipService>()

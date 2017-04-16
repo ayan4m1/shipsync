@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Forms;
@@ -30,23 +31,24 @@ namespace ShipSync.GUI
             _authNonce = Guid.NewGuid().ToString("N");
         }
 
-        protected override void Dispose(bool disposing)
+        protected override void OnClosing(CancelEventArgs e)
         {
-            if (disposing && Cef.IsInitialized)
+            base.OnClosing(e);
+
+            if (Cef.IsInitialized)
             {
                 Cef.Shutdown();
             }
-
-            base.Dispose(disposing);
         }
 
         protected override async void OnLoadComplete(EventArgs e)
         {
             base.OnLoadComplete(e);
+
             var authed = await AuthService.TestAccessToken();
             if (authed)
             {
-                Eto.Forms.Application.Instance.AsyncInvoke(BeginClosing);
+                Eto.Forms.Application.Instance.AsyncInvoke(Close);
             }
 
             Size = Eto.Forms.Screen.PrimaryScreen.WorkingArea.Size.ToSize();
@@ -68,12 +70,6 @@ namespace ShipSync.GUI
             _browser.Resize += _browser_Resize;
 
             Content = _browser.ToEto();
-        }
-
-        private void BeginClosing()
-        {
-            Close();
-            Dispose(true);
         }
 
         private void _browser_Resize(object sender, EventArgs e)
@@ -134,7 +130,7 @@ namespace ShipSync.GUI
             {
                 Log.Info("State validation completed successfully, setting token");
                 AuthService.UpdateToken(queryParams["access_token"]);
-                Eto.Forms.Application.Instance.AsyncInvoke(BeginClosing);
+                Eto.Forms.Application.Instance.AsyncInvoke(Close);
             }
         }
 

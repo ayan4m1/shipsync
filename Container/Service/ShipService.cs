@@ -14,7 +14,7 @@ namespace ShipSync.Container.Service
 
         public List<GameSave> FindSavesInSource(SaveSource source)
         {
-            return Directory.GetDirectories(source.InstallPath)
+            return Directory.GetDirectories(Path.Combine(source.InstallPath, "saves"))
                 .SelectMany(dir =>
                 {
                     if (dir.EndsWith("scenarios") || dir.EndsWith("training"))
@@ -30,10 +30,19 @@ namespace ShipSync.Container.Service
                     };
                 })
                 .Where(dir => !string.IsNullOrWhiteSpace(dir))
-                .Select(dir => new GameSave()
+                .Select(dir =>
                 {
-                    Name = new DirectoryInfo(dir).Name,
-                    SaveSource = source
+                    var dirInfo = new DirectoryInfo(dir);
+                    var parentDir = dirInfo.Parent?.Parent?.Name;
+                    var typeDir = dirInfo.Name;
+                    var fileCount = dirInfo.GetFiles().Length;
+                    var saveName = parentDir + " - " + typeDir + "(" + fileCount + " craft)";
+                    return new GameSave()
+                    {
+                        Name = saveName,
+                        Path = dir,
+                        SaveSource = source
+                    };
                 }).Distinct().ToList();
         }
 

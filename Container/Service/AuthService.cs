@@ -53,7 +53,7 @@ namespace ShipSync.Container.Service
             using (var configFile = File.CreateText(configPath))
             {
                 Log.Info("Writing JSON config");
-                new JsonSerializer().Serialize(configFile, this);
+                new JsonSerializer().Serialize(configFile, _config);
             }
         }
 

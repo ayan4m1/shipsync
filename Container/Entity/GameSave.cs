@@ -8,8 +8,11 @@ namespace ShipSync.Container.Entity
         // name of the instance that this save belongs to
         public SaveSource SaveSource;
 
-        // directory name under the source "saves/" dir
+        // descriptive name for the directory (type and craft count)
         public string Name;
+
+        // directory name under the source "saves/" dir
+        public string Path;
 
         // private list exposed as a public ReadOnlyCollection
         public IEnumerable<Ship> Ships => _ships.AsReadOnly();
