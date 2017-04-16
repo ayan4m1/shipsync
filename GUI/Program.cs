@@ -25,7 +25,7 @@ namespace ShipSync.GUI
             var builder = new ContainerBuilder();
 
             Log.Debug("Getting current assembly");
-            var containerAssy = Assembly.GetAssembly(typeof(JsonConfig));
+            var containerAssy = Assembly.GetAssembly(typeof(DropboxConfig));
 
             Log.Debug("Registering Services and Repositories");
             builder.RegisterAssemblyTypes(containerAssy)
@@ -36,7 +36,7 @@ namespace ShipSync.GUI
 
             Log.Debug("Reading configuration");
             var configPath = Path.Combine(Environment.CurrentDirectory, "app.json");
-            var configModule = new JsonConfigModule(configPath);
+            var configModule = new DropboxConfigModule(configPath);
             builder.RegisterModule(configModule);
 
             Log.Debug("Creating application container");
@@ -45,12 +45,24 @@ namespace ShipSync.GUI
 
             using (var appInstance = new Application())
             {
+                var authService = Container.Resolve<IAuthService>();
+
                 // see if we need a new token
                 appInstance.Run(new BrowserDialog()
                 {
-                    AuthService = Container.Resolve<IAuthService>()
+                    AuthService = authService
                 });
-                Log.Info("Auth resolved");
+
+                var testTask = authService.TestAccessToken();
+                testTask.Wait();
+                if (testTask.Result)
+                {
+                    Log.Info("Auth resolved");
+                }
+                else
+                {
+                    Log.Error("Failed to get a valid access token!");
+                }
             }
 
             using (var appInstance = new Application())

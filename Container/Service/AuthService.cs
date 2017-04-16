@@ -14,9 +14,9 @@ namespace ShipSync.Container.Service
     public class AuthService : IAuthService
     {
         private static readonly ILog Log = LogManager.GetLogger(typeof(PathService));
-        private readonly JsonConfig _config;
+        private readonly DropboxConfig _config;
 
-        public AuthService(JsonConfig config)
+        public AuthService(DropboxConfig config)
         {
             _config = config;
             UpdateClient();
@@ -29,21 +29,21 @@ namespace ShipSync.Container.Service
             get
             {
                 Log.Debug("Looking up OAuth client identifier");
-                return _config.Dropbox.Client;
+                return _config.Client;
             }
         }
 
         public void UpdateToken(string token)
         {
-            _config.Dropbox.Token = token;
+            _config.Token = token;
             UpdateClient();
             Save();
         }
 
         private void UpdateClient()
         {
-            Client = new DropboxClient(_config.Dropbox.Token);
-            Log.Debug("Created Dropbox Client with token " + _config.Dropbox.Token);
+            Client = new DropboxClient(_config.Token);
+            Log.Debug("Created Dropbox Client with token " + _config.Token);
         }
 
         public void Save()
@@ -67,8 +67,10 @@ namespace ShipSync.Container.Service
                     return false;
                 }
 
-                var result = await Client.Files.GetMetadataAsync("/");
-                return result.IsFolder;
+                //var result = await Client.Files.GetMetadataAsync(@"/Apps/ShipSync");
+                //return result.IsFolder;
+                await Client.Users.GetCurrentAccountAsync();
+                return true;
             }
             catch (Exception e)
             {

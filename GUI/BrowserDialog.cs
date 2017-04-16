@@ -27,8 +27,11 @@ namespace ShipSync.GUI
 
         public BrowserDialog()
         {
-            Cef.Initialize(new CefSettings());
-            _authNonce = Guid.NewGuid().ToString("N");
+            if (!Cef.IsInitialized)
+            {
+                Cef.Initialize(new CefSettings());
+                _authNonce = Guid.NewGuid().ToString("N");
+            }
         }
 
         protected override void OnClosing(CancelEventArgs e)
