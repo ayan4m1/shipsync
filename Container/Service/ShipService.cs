@@ -36,7 +36,7 @@ namespace ShipSync.Container.Service
                     var parentDir = dirInfo.Parent?.Parent?.Name;
                     var typeDir = dirInfo.Name;
                     var fileCount = dirInfo.GetFiles().Length;
-                    var saveName = parentDir + " - " + typeDir + "(" + fileCount + " craft)";
+                    var saveName = parentDir + " - " + typeDir + " (" + fileCount + " craft)";
                     return new GameSave()
                     {
                         Name = saveName,
