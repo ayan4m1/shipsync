@@ -161,9 +161,9 @@ namespace ShipSync.GUI
 
         private void Submit_Click(object sender, EventArgs e)
         {
-            int added = 0;
-            int updated = 0;
-            int scanned = 0;
+            var added = 0;
+            var updated = 0;
+            var scanned = 0;
 
             var steamPath = PathService.FindSaveSource();
             var baseDest = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), "Dropbox", "Apps", "ShipSync");
@@ -189,26 +189,28 @@ namespace ShipSync.GUI
                     {
                         var craftTime = File.GetLastWriteTime(relative);
                         var dropboxTime = File.GetLastWriteTime(destPath);
-                        if (craftTime.CompareTo(dropboxTime) > 0)
+                        if (craftTime.CompareTo(dropboxTime) <= 0)
                         {
-                            updated++;
-                            Log.Info("Syncing " + craft + " into " + destPath);
-                            using (var writer = File.OpenWrite(destPath))
+                            continue;
+                        }
+
+                        updated++;
+                        Log.Info("Syncing " + craft + " into " + destPath);
+                        using (var writer = File.OpenWrite(destPath))
+                        {
+                            writer.Write(new byte[writer.Length], 0, (int) writer.Length);
+                            writer.Position = 0;
+                            using (var reader = File.OpenRead(relative))
                             {
-                                writer.Write(new byte[writer.Length], 0, (int) writer.Length);
-                                writer.Position = 0;
-                                using (var reader = File.OpenRead(relative))
-                                {
-                                    reader.CopyTo(writer);
-                                }
-                                writer.Flush();
+                                reader.CopyTo(writer);
                             }
+                            writer.Flush();
                         }
                     }
                     else
                     {
                         added++;
-                        File.Copy(relative, destPath);
+                        File.Copy(craft.FullName, destPath);
                         Log.Info("Adding new craft " + craft + " to " + destPath);
                     }
                 }
