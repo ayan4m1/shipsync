@@ -43,34 +43,6 @@ namespace ShipSync.GUI
 
             using (var appInstance = new Application())
             {
-                var authService = Container.Resolve<IAuthService>();
-
-                var testTask = authService.TestAccessToken();
-                testTask.Wait();
-                if (testTask.Result)
-                {
-                    Log.Info("Valid token confirmed");
-                }
-                else
-                {
-                    try
-                    {
-                        // see if we need a new token
-                        appInstance.Run(new BrowserDialog()
-                        {
-                            AuthService = authService
-                        });
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error("Failed to get a valid access token!", e);
-                        return;
-                    }
-                }
-            }
-
-            using (var appInstance = new Application())
-            {
                 Log.Info("Creating main application form");
                 var mainForm = new SyncSelectDialog()
                 {
