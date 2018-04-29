@@ -1,5 +1,7 @@
 language: csharp
 solution: ShipSync.sln
+before_install:
+  - sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 417A0893
 mono:
   - '5.10.0'
   - '5.8.1'
