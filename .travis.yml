@@ -1,5 +1,4 @@
 language: csharp
 solution: ShipSync.sln
 mono:
-  - '5.10.0'
-  - '5.8.1'
+  - latest
