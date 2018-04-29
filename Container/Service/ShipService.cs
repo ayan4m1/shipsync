@@ -19,7 +19,7 @@ namespace ShipSync.Container.Service
                 {
                     if (dir.EndsWith("scenarios") || dir.EndsWith("training"))
                     {
-                        return new string[] {};
+                        return new string[] { };
                     }
 
                     var baseDir = Path.Combine(dir, "Ships");
